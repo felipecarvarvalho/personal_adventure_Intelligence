@@ -1,0 +1,430 @@
+<!-- ADICIONE ESTA PARTE DENTRO DA <section class="section"> -->
+<!-- logo abaixo dos 3 cards já existentes -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Personal Adventure Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial, Helvetica, sans-serif;
+  scroll-behavior:smooth;
+}
+
+body{
+  background:#000;
+  color:white;
+  overflow-x:hidden;
+}
+
+/* NAVBAR */
+
+nav{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  padding:25px 8%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:1000;
+  background:rgba(0,0,0,0.35);
+  backdrop-filter:blur(8px);
+}
+
+nav h2{
+  font-size:1rem;
+  letter-spacing:4px;
+  text-transform:uppercase;
+}
+
+nav a{
+  color:white;
+  text-decoration:none;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+nav a:hover{
+  color:#ff7a00;
+}
+
+/* HERO */
+
+.hero{
+  width:100%;
+  height:100vh;
+  background:
+  linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.65)),
+  url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1974&auto=format&fit=crop');
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:20px;
+  position:relative;
+}
+
+.hero-content{
+  max-width:900px;
+  animation:fadeIn 1.2s ease;
+}
+
+.logo{
+  font-size:1rem;
+  letter-spacing:5px;
+  text-transform:uppercase;
+  margin-bottom:20px;
+  color:#d4d4d4;
+}
+
+.hero h1{
+  font-size:5rem;
+  line-height:1;
+  text-transform:uppercase;
+  margin-bottom:25px;
+  font-weight:900;
+}
+
+.hero p{
+  font-size:1.2rem;
+  color:#e0e0e0;
+  margin-bottom:40px;
+  line-height:1.7;
+}
+
+.buttons{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.btn{
+  padding:16px 34px;
+  text-decoration:none;
+  border-radius:50px;
+  font-weight:bold;
+  transition:0.3s;
+  font-size:1rem;
+}
+
+.btn-primary{
+  background:#ff7a00;
+  color:white;
+}
+
+.btn-primary:hover{
+  background:#ff9500;
+  transform:translateY(-3px);
+}
+
+.btn-secondary{
+  border:2px solid white;
+  color:white;
+}
+
+.btn-secondary:hover{
+  background:white;
+  color:black;
+}
+
+/* SECTION */
+
+.section{
+  padding:100px 8%;
+  background:#0b0b0b;
+}
+
+.section-title{
+  font-size:3rem;
+  margin-bottom:20px;
+  text-transform:uppercase;
+}
+
+.section-text{
+  max-width:800px;
+  color:#cfcfcf;
+  line-height:1.8;
+  font-size:1.1rem;
+}
+
+.cards{
+  margin-top:60px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:#151515;
+  border-radius:20px;
+  overflow:hidden;
+  transition:0.4s;
+}
+
+.card:hover{
+  transform:translateY(-10px);
+}
+
+.card img{
+  width:100%;
+  height:250px;
+  object-fit:cover;
+}
+
+.card-content{
+  padding:25px;
+}
+
+.card h3{
+  margin-bottom:15px;
+  font-size:1.5rem;
+}
+
+.card p{
+  color:#c9c9c9;
+  line-height:1.6;
+}
+
+/* CTA */
+
+.cta{
+  padding:120px 8%;
+  text-align:center;
+  background:
+  linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+  url('https://images.unsplash.com/photo-1527631746610-bca00a040d60?q=80&w=1974&auto=format&fit=crop');
+  background-size:cover;
+  background-position:center;
+}
+
+.cta h2{
+  font-size:4rem;
+  margin-bottom:20px;
+  text-transform:uppercase;
+}
+
+.cta p{
+  max-width:700px;
+  margin:auto;
+  color:#e0e0e0;
+  line-height:1.8;
+  margin-bottom:40px;
+}
+
+/* FOOTER */
+
+footer{
+  background:#050505;
+  padding:40px 20px;
+  text-align:center;
+  color:#8d8d8d;
+  font-size:0.9rem;
+}
+
+/* ANIMATION */
+
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+/* RESPONSIVO */
+
+@media(max-width:768px){
+
+  nav{
+    padding:20px;
+  }
+
+  .hero h1{
+    font-size:3rem;
+  }
+
+  .cta h2{
+    font-size:2.5rem;
+  }
+
+  .section-title{
+    font-size:2.2rem;
+  }
+
+  .hero p,
+  .section-text,
+  .cta p{
+    font-size:1rem;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+
+<nav>
+  <h2>PAI Adventure</h2>
+
+  <a href="https://www.instagram.com/personaladventure/" target="_blank">
+    Instagram
+  </a>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="hero-content">
+
+    <div class="logo">
+      PERSONAL ADVENTURE INTELLIGENCE
+    </div>
+
+    <h1>
+      Explore.<br>
+      Descubra.<br>
+      Viva.
+    </h1>
+
+    <p>
+      Aventuras, trilhas, expedições e experiências únicas
+      para quem busca liberdade, adrenalina e conexão com a natureza.
+    </p>
+
+    <div class="buttons">
+
+      <a
+        href="https://wa.me/5511919219193?text=Olá,%20quero%20agendar%20uma%20aventura!"
+        target="_blank"
+        class="btn btn-primary"
+      >
+        Agende sua aventura
+      </a>
+
+      <a
+        href="https://www.instagram.com/personaladventure/"
+        target="_blank"
+        class="btn btn-secondary"
+      >
+        Ver Instagram
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- SOBRE -->
+
+<section class="section">
+
+  <h2 class="section-title">
+    Sobre a Experiência
+  </h2>
+
+  <p class="section-text">
+    A Personal Adventure Intelligence nasceu para transformar turismo
+    em experiências inesquecíveis. Criamos aventuras personalizadas
+    para quem deseja sair da rotina, explorar lugares incríveis
+    e viver momentos intensos com segurança e emoção.
+  </p>
+
+  <div class="cards">
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1501555088652-021faa106b9b?q=80&w=1974&auto=format&fit=crop">
+
+      <div class="card-content">
+        <h3>Trilhas</h3>
+
+        <p>
+          Descubra paisagens incríveis, cachoeiras escondidas
+          e montanhas impressionantes.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1974&auto=format&fit=crop">
+
+      <div class="card-content">
+        <h3>Expedições</h3>
+
+        <p>
+          Aventuras guiadas para quem busca desafios reais
+          e experiências memoráveis.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=1974&auto=format&fit=crop">
+
+      <div class="card-content">
+        <h3>Turismo Radical</h3>
+
+        <p>
+          Viva esportes e atividades de aventura
+          com adrenalina e total segurança.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- CTA -->
+
+<section class="cta">
+
+  <h2>
+    Sua próxima aventura começa agora
+  </h2>
+
+  <p>
+    Entre em contato e descubra experiências exclusivas
+    criadas especialmente para aventureiros que querem
+    ir além do comum.
+  </p>
+
+  <a
+    href="https://wa.me/5511919219193?text=Olá,%20quero%20mais%20informações!"
+    target="_blank"
+    class="btn btn-primary"
+  >
+    WhatsApp para contato
+  </a>
+
+</section>
+
+<footer>
+  © 2026 Personal Adventure Intelligence — Todos os direitos reservados.
+</footer>
+
+</body>
+</html>

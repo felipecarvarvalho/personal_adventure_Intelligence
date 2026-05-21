@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Adventure Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --verde: #2d6a4f;
+    --verde-claro: #74c69d;
+    --laranja: #e76f00;
+    --laranja-claro: #f4a261;
+    --escuro: #0a0a0a;
+    --escuro2: #111111;
+    --escuro3: #1a1a1a;
+    --cinza: #2a2a2a;
+    --branco: #f5f0e8;
+    --ouro: #c9a84c;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--escuro);
+    color: var(--branco);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR PERSONALIZADO */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--laranja);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99999;
+    transition: transform 0.1s ease;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--laranja);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 99998;
+    transition: all 0.15s ease;
+    mix-blend-mode: difference;
+  }
+
+  /* NAVEGAÇÃO */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 1000;
+    padding: 20px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+    transition: background 0.3s;
+  }
+  nav.scrolled { background: rgba(0,0,0,0.95); padding: 15px 48px; }
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 4px;
+    color: var(--branco);
+    text-decoration: none;
+    line-height: 1;
+  }
+  .logo span { color: var(--laranja); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.75);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--laranja); }
+  .nav-cta {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--escuro);
+    background: var(--laranja);
+    padding: 10px 24px;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--laranja-claro); transform: translateY(-1px); }
+
+  /* HERO SECTION */
+  #hero {
+    height: 100vh;
+    position: relative;
+    display: flex; align-items: flex-end;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: 
+      linear-gradient(to right, rgba(0,0,0,0.85) 40%, rgba(0,0,0,0.3) 100%),
+      url('capa.jpg') center/cover no-repeat;
+    transform: scale(1.05);
+    animation: heroZoom 12s ease-out forwards;
+  }
+  @keyframes heroZoom { to { transform: scale(1); } }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(10,10,10,1) 0%, transparent 40%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 48px 80px;
+    max-width: 900px;
+  }
+  .hero-tag {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--laranja);
+    margin-bottom: 16px;
+    opacity: 0; animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 10vw, 140px);
+    line-height: 0.85;
+    letter-spacing: 2px;
+    color: var(--branco);
+    margin-bottom: 24px;
+    opacity: 0; animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .hero-title em { color: var(--laranja); font-style: normal; }
+  .hero-sub {
+    font-size: 18px; font-weight: 300; color: rgba(245,240,232,0.7);
+    max-width: 550px; line-height: 1.6; margin-bottom: 40px;
+    opacity: 0; animation: fadeUp 0.8s 1.1s forwards;
+  }
+  .hero-btns {
+    display: flex; gap: 20px;
+    opacity: 0; animation: fadeUp 0.8s 1.4s forwards;
+  }
+  .btn-primary {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--escuro); background: var(--laranja); padding: 18px 40px;
+    text-decoration: none; transition: all 0.3s;
+  }
+  .btn-primary:hover { background: var(--laranja-claro); transform: translateY(-3px); }
+  .btn-ghost {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--branco); border: 1px solid rgba(245,240,232,0.3); padding: 18px 40px;
+    text-decoration: none; transition: all 0.3s;
+  }
+  .btn-ghost:hover { border-color: var(--laranja); color: var(--laranja); }
+
+  /* TICKER */
+  .ticker { background: var(--laranja); padding: 15px 0; overflow: hidden; white-space: nowrap; }
+  .ticker-inner { display: inline-flex; gap: 60px; animation: ticker 30s linear infinite; }
+  .ticker-item { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--escuro); }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* SOBRE */
+  #sobre { background: var(--escuro2); padding: 120px 48px; }
+  .sobre-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; align-items: center; }
+  .sobre-img-wrap { position: relative; }
+  .sobre-img { width: 100%; aspect-ratio: 4/5; object-fit: cover; border-radius: 2px; }
+  .sobre-badge { position: absolute; bottom: 40px; left: -40px; background: var(--laranja); padding: 30px; color: var(--escuro); }
+  .sobre-badge-num { font-family: 'Bebas Neue', sans-serif; font-size: 56px; line-height: 1; }
+  .section-label { font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 5px; text-transform: uppercase; color: var(--laranja); margin-bottom: 20px; display: block; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(40px, 6vw, 80px); line-height: 1; letter-spacing: 2px; color: var(--branco); margin-bottom: 30px;}
+  .section-title em { color: var(--laranja); font-style: normal; }
+  .sobre-text p { font-size: 18px; font-weight: 300; line-height: 1.8; color: rgba(245,240,232,0.7); margin-bottom: 20px; }
+
+  /* SERVIÇOS */
+  #servicos { background: var(--escuro); padding: 120px 48px; }
+  .servicos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 60px auto 0; }
+  .servico-card { display: flex; flex-direction: column; background: var(--escuro3); padding: 40px; position: relative; overflow: hidden; transition: transform 0.3s; border-bottom: 2px solid transparent; }
+  .servico-card:hover { transform: translateY(-10px); border-color: var(--laranja); }
+  .servico-card h3 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; margin-bottom: 15px; }
+  .servico-card p { font-size: 15px; color: rgba(245,240,232,0.6); line-height: 1.6; margin-bottom: 30px; flex-grow: 1; }
+  .servico-link {
+    font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--laranja); text-decoration: none; display: inline-block;
+    transition: opacity 0.3s;
+  }
+  .servico-link:hover { opacity: 0.7; }
+
+  /* GALERIA */
+  #galeria { background: var(--escuro2); padding: 0; }
+  .galeria-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .galeria-item { aspect-ratio: 1; overflow: hidden; cursor: pointer; position: relative; }
+  .galeria-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s; filter: grayscale(0.5); }
+  .galeria-item:hover img { transform: scale(1.1); filter: grayscale(0); }
+
+  /* VÍDEOS */
+  #videos { background: var(--escuro); padding: 120px 48px; }
+  .videos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 60px auto; }
+  .video-thumb { position: relative; aspect-ratio: 16/9; cursor: pointer; overflow: hidden; background: #000; }
+  .video-thumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.6; transition: 0.3s; }
+  .video-thumb:hover img { opacity: 0.8; transform: scale(1.05); }
+  .play-mini { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--laranja); font-size: 40px; }
+
+  /* PRODUTOS */
+  #produtos { background: var(--escuro2); padding: 120px 48px; }
+  .produtos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 1200px; margin: 60px auto 0; }
+  .prod-card { background: var(--escuro3); padding: 30px; text-align: center; transition: 0.3s; border: 1px solid rgba(255,255,255,0.02); }
+  .prod-card:hover { transform: translateY(-5px); border-color: rgba(231,111,0,0.3); }
+  .prod-img { width: 100%; aspect-ratio: 1; background: var(--cinza); margin-bottom: 20px; object-fit: cover; border-radius: 4px; }
+  .prod-name { font-family: 'Bebas Neue', sans-serif; font-size: 24px; margin-bottom: 10px; }
+  .prod-price { color: var(--laranja); font-weight: 700; font-size: 22px; margin-bottom: 20px; display: block; }
+  .buy-btn {
+    background: var(--laranja); color: var(--escuro); padding: 14px 24px; text-decoration: none;
+    font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 2px;
+    display: inline-block; transition: background 0.3s;
+  }
+  .buy-btn:hover { background: var(--laranja-claro); }
+
+  /* CTA WHATSAPP & CONTATO */
+  #contato { background: var(--laranja); text-align: center; padding: 100px 48px; color: var(--escuro); }
+  .wa-btn {
+    display: inline-flex; align-items: center; gap: 10px; margin-top: 30px; background: var(--escuro); color: var(--branco);
+    padding: 20px 50px; text-decoration: none; font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: transform 0.3s;
+  }
+  .wa-btn:hover { transform: translateY(-4px); }
+
+  /* WHATSAPP FLUTUANTE */
+  .float-wa {
+    position: fixed; bottom: 30px; right: 30px; z-index: 1000;
+    width: 60px; height: 60px; background: #25D366; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3); text-decoration: none; color: white; font-size: 30px;
+    transition: transform 0.3s;
+  }
+  .float-wa:hover { transform: scale(1.1); }
+
+  /* FOOTER COMPLETO */
+  footer { background: #050505; padding: 80px 48px 40px; }
+  .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; text-align: left; }
+  .footer-brand .logo { font-size: 28px; display: block; margin-bottom: 16px; }
+  .footer-brand p { font-size: 14px; font-weight: 300; color: rgba(245,240,232,0.45); line-height: 1.7; max-width: 260px; }
+  .footer-col h5 { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--laranja); margin-bottom: 20px; }
+  .footer-col ul { list-style: none; }
+  .footer-col ul li { margin-bottom: 12px; }
+  .footer-col ul li a { font-size: 14px; font-weight: 300; color: rgba(245,240,232,0.5); text-decoration: none; transition: color 0.2s; }
+  .footer-col ul li a:hover { color: var(--laranja); }
+  .footer-bottom { max-width: 1200px; margin: 60px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; justify-content: space-between; align-items: center; }
+  .footer-bottom p { font-size: 12px; color: rgba(245,240,232,0.3); font-family: 'Barlow Condensed', sans-serif; letter-spacing: 2px; text-transform: uppercase; }
+  .social-links { display: flex; gap: 16px; }
+  .social-links a {
+    width: 40px; height: 40px; border: 1px solid rgba(255,255,255,0.1); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; color: rgba(245,240,232,0.5);
+    text-decoration: none; font-size: 16px; transition: all 0.2s;
+  }
+  .social-links a:hover { border-color: var(--laranja); color: var(--laranja); transform: translateY(-3px); }
+
+  /* ANIMAÇÕES */
+  .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s all ease; }
+  .reveal-left { opacity: 0; transform: translateX(-50px); transition: 0.8s all ease; }
+  .reveal-right { opacity: 0; transform: translateX(50px); transition: 0.8s all ease; }
+  .visible { opacity: 1; transform: translate(0); }
+  @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+  /* MODAL */
+  .modal { display: none; position: fixed; inset: 0; z-index: 10000; background: rgba(0,0,0,0.95); align-items: center; justify-content: center; padding: 40px; }
+  .modal.open { display: flex; }
+  .modal-close { position: absolute; top: 30px; right: 30px; color: white; font-size: 30px; cursor: pointer; }
+
+  @media (max-width: 900px) {
+    .nav-links, .nav-cta { display: none; }
+    .sobre-grid, .servicos-grid, .produtos-grid, .videos-grid { grid-template-columns: 1fr; gap: 50px;}
+    .galeria-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    .footer-inner { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="navbar">
+  <a href="#" class="logo">Personal<span>.</span>Adventure<br><span style="font-size:12px; letter-spacing:6px; color:rgba(255,255,255,0.4)">INTELLIGENCE</span></a>
+  <ul class="nav-links">
+    <li><a href="#sobre">Sobre</a></li>
+    <li><a href="#servicos">Serviços</a></li>
+    <li><a href="#galeria">Galeria</a></li>
+    <li><a href="#videos">Vídeos</a></li>
+    <li><a href="#produtos">Loja</a></li>
+  </ul>
+  <a href="https://wa.me/5511919219193?text=Olá! Vim pelo site e gostaria de conversar com vocês." target="_blank" class="nav-cta">Contato</a>
+</nav>
+
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <span class="hero-tag">Aventura & Bem-estar de Luxo</span>
+    <h1 class="hero-title">PERSONAL<br><em>ADVENTURE</em><br>INTELLIGENCE</h1>
+    <p class="hero-sub">Experiências exclusivas de tour de moto pelo Brasil combinadas com serviços premium de massoterapia e autocuidado.</p>
+    <div class="hero-btns">
+      <a href="#servicos" class="btn-primary">Explorar Serviços</a>
+      <a href="#produtos" class="btn-ghost">Ver Loja</a>
+    </div>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="ticker-item">✦ Moto Tours Brasil</span>
+    <span class="ticker-item">✦ Massoterapia Premium</span>
+    <span class="ticker-item">✦ Manicure Profissional</span>
+    <span class="ticker-item">✦ Produtos Exclusivos</span>
+    <span class="ticker-item">✦ Roteiros Personalizados</span>
+    <span class="ticker-item">✦ Moto Tours Brasil</span>
+    <span class="ticker-item">✦ Massoterapia Premium</span>
+    <span class="ticker-item">✦ Manicure Profissional</span>
+  </div>
+</div>
+
+<section id="sobre">
+  <div class="sobre-grid">
+    <div class="sobre-img-wrap reveal-left">
+      <img src="sobre.jpg" alt="Aventura" class="sobre-img">
+      <div class="sobre-badge">
+        <div class="sobre-badge-num">10+</div>
+        <div style="font-size:12px; text-transform:uppercase; letter-spacing:2px">Anos de<br>Estrada</div>
+      </div>
+    </div>
+    <div class="sobre-text reveal-right">
+      <span class="section-label">A Mente por trás</span>
+      <h2 class="section-title">EQUILÍBRIO ENTRE<br><em>ADRENALINA E PAZ</em></h2>
+      <p>Com mais de uma década unindo a paixão pelas estradas e o cuidado minucioso com o corpo, criei a Personal Adventure Intelligence.</p>
+      <p>Seja explorando as paisagens mais incríveis do Brasil sobre duas rodas ou relaxando com nossos tratamentos terapêuticos exclusivos, cada detalhe é planejado para sua transformação.</p>
+    </div>
+  </div>
+</section>
+
+<section id="servicos">
+  <div style="text-align: center" class="reveal">
+    <span class="section-label">O que oferecemos</span>
+    <h2 class="section-title">SERVIÇOS <em>PREMIUM</em></h2>
+  </div>
+  <div class="servicos-grid">
+    <div class="servico-card reveal">
+      <h3>01. Moto Tours</h3>
+      <p>Roteiros épicos pelas melhores estradas do Brasil. Suporte total, guia experiente e paisagens de tirar o fôlego.</p>
+      <a href="https://wa.me/5511919219193?text=Olá! Gostaria de saber mais sobre os Tours de Moto pelo Brasil." target="_blank" class="servico-link">Agendar Aventura →</a>
+    </div>
+    <div class="servico-card reveal" style="transition-delay: 0.1s">
+      <h3>02. Massoterapia</h3>
+      <p>Recuperação muscular e relaxamento profundo. Técnicas exclusivas para aliviar tensões após grandes jornadas.</p>
+      <a href="https://wa.me/5511919219193?text=Olá! Gostaria de agendar uma sessão de Massoterapia." target="_blank" class="servico-link">Agendar Sessão →</a>
+    </div>
+    <div class="servico-card reveal" style="transition-delay: 0.2s">
+      <h3>03. Manicure</h3>
+      <p>Cuidado estético, nail art e saúde das mãos com acabamento impecável. Arte e cuidado nas pontas dos dedos.</p>
+      <a href="https://wa.me/5511919219193?text=Olá! Gostaria de agendar um horário para Manicure." target="_blank" class="servico-link">Agendar Horário →</a>
+    </div>
+  </div>
+</section>
+
+<section id="galeria">
+  <div class="galeria-grid">
+    <div class="galeria-item" onclick="openLightbox('galeria-1.jpg')"><img src="galeria-1.jpg"></div>
+    <div class="galeria-item" onclick="openLightbox('galeria-2.jpg')"><img src="galeria-2.jpg"></div>
+    <div class="galeria-item" onclick="openLightbox('galeria-3.jpg')"><img src="galeria-3.jpg"></div>
+    <div class="galeria-item" onclick="openLightbox('galeria-4.jpg')"><img src="galeria-4.jpg"></div>
+    <div class="galeria-item" onclick="openLightbox('galeria-5.jpg')"><img src="galeria-5.jpg"></div>
+    <div class="galeria-item" onclick="openLightbox('galeria-6.jpg')"><img src="galeria-6.jpg"></div>
+    <div class="galeria-item" onclick="openLightbox('servico-1.jpg')"><img src="servico-1.jpg"></div>
+    <div class="galeria-item" onclick="openLightbox('capa.jpg')"><img src="capa.jpg"></div>
+  </div>
+</section>
+
+<section id="videos">
+  <div style="text-align: center" class="reveal">
+    <span class="section-label">Nossas Jornadas</span>
+    <h2 class="section-title">VÍDEOS <em>EM DESTAQUE</em></h2>
+  </div>
+  <div class="videos-grid">
+    <div class="video-thumb reveal" onclick="openVideo('https://www.youtube.com/embed/DlP5i4jLoyM')">
+      <img src="video-capa-1.jpg">
+      <div class="play-mini">▶</div>
+    </div>
+    <div class="video-thumb reveal" style="transition-delay: 0.1s" onclick="openVideo('https://www.youtube.com/embed/DlP5i4jLoyM')">
+      <img src="capa.jpg">
+      <div class="play-mini">▶</div>
+    </div>
+    <div class="video-thumb reveal" style="transition-delay: 0.2s" onclick="openVideo('https://www.youtube.com/embed/ZBOB4KZvWaA')">
+      <img src="galeria-6.jpg">
+      <div class="play-mini">▶</div>
+    </div>
+  </div>
+</section>
+
+<section id="produtos">
+  <div style="text-align: center" class="reveal">
+    <span class="section-label">Nossa Marca</span>
+    <h2 class="section-title">LOJA <em>EXCLUSIVA</em></h2>
+  </div>
+  <div class="produtos-grid">
+    <div class="prod-card reveal">
+      <img src="capa.jpg" class="prod-img" alt="Kit Tour">
+      <h4 class="prod-name">Kit do Motoviajante</h4>
+      <span class="prod-price">R$ 189,00</span>
+      <a href="https://wa.me/5511919219193?text=Olá! Quero comprar o *Kit do Motoviajante* no valor de R$189,00." target="_blank" class="buy-btn">Comprar no WhatsApp</a>
+    </div>
+    <div class="prod-card reveal" style="transition-delay: 0.1s">
+      <img src="sobre.jpg" class="prod-img" alt="Óleo">
+      <h4 class="prod-name">Óleo Relaxante</h4>
+      <span class="prod-price">R$ 89,00</span>
+      <a href="https://wa.me/5511919219193?text=Olá! Quero comprar o *Óleo Relaxante* no valor de R$89,00." target="_blank" class="buy-btn">Comprar no WhatsApp</a>
+    </div>
+    <div class="prod-card reveal" style="transition-delay: 0.2s">
+      <img src="galeria-3.jpg" class="prod-img" alt="Kit Manicure">
+      <h4 class="prod-name">Kit Nail Care</h4>
+      <span class="prod-price">R$ 129,00</span>
+      <a href="https://wa.me/5511919219193?text=Olá! Quero comprar o *Kit Nail Care* no valor de R$129,00." target="_blank" class="buy-btn">Comprar no WhatsApp</a>
+    </div>
+    <div class="prod-card reveal">
+      <img src="galeria-1.jpg" class="prod-img" alt="Guia de Rotas">
+      <h4 class="prod-name">Guia de Rotas</h4>
+      <span class="prod-price">R$ 49,00</span>
+      <a href="https://wa.me/5511919219193?text=Olá! Quero comprar o *Guia de Rotas* no valor de R$49,00." target="_blank" class="buy-btn">Comprar no WhatsApp</a>
+    </div>
+    <div class="prod-card reveal" style="transition-delay: 0.1s">
+      <img src="servico-1.jpg" class="prod-img" alt="Voucher Massagem">
+      <h4 class="prod-name">Voucher Massagem</h4>
+      <span class="prod-price">R$ 150,00</span>
+      <a href="https://wa.me/5511919219193?text=Olá! Quero comprar o *Voucher de Massagem* no valor de R$150,00." target="_blank" class="buy-btn">Comprar no WhatsApp</a>
+    </div>
+    <div class="prod-card reveal" style="transition-delay: 0.2s">
+      <img src="galeria-5.jpg" class="prod-img" alt="Camiseta">
+      <h4 class="prod-name">Camiseta PAI</h4>
+      <span class="prod-price">R$ 79,00</span>
+      <a href="https://wa.me/5511919219193?text=Olá! Quero comprar a *Camiseta PAI* no valor de R$79,00. Pode me mostrar os tamanhos disponíveis?" target="_blank" class="buy-btn">Comprar no WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<section id="contato">
+  <div class="reveal">
+    <h2 class="section-title" style="color:var(--escuro)">VAMOS COMEÇAR<br>ESSA <em>HISTÓRIA?</em></h2>
+    <p style="color:var(--escuro); margin-top:20px; font-size: 18px;">Clique no botão abaixo para conversar diretamente conosco via WhatsApp e tirar todas as suas dúvidas.</p>
+    <a href="https://wa.me/5511919219193?text=Olá! Estava navegando no site e gostaria de tirar algumas dúvidas." target="_blank" class="wa-btn">💬 Chamar no WhatsApp</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a href="#" class="logo">PAI<span>.</span></a>
+      <p>Personal Adventure Intelligence — aventura, bem-estar e produtos exclusivos pelo Brasil.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Serviços</h5>
+      <ul>
+        <li><a href="#servicos">Tour de Moto</a></li>
+        <li><a href="#servicos">Massoterapia</a></li>
+        <li><a href="#servicos">Manicure</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Explorar</h5>
+      <ul>
+        <li><a href="#sobre">Quem Sou</a></li>
+        <li><a href="#galeria">Galeria</a></li>
+        <li><a href="#videos">Vídeos</a></li>
+        <li><a href="#produtos">Nossa Loja</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Contato</h5>
+      <ul>
+        <li><a href="https://wa.me/5511919219193" target="_blank">+55 11 91921-9193</a></li>
+        <li><a href="https://www.instagram.com/personaladventure/" target="_blank">@personaladventure</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2024 Personal Adventure Intelligence. Todos os direitos reservados.</p>
+    <div class="social-links">
+      <a href="https://www.instagram.com/personaladventure/" target="_blank" title="Instagram">IG</a>
+      <a href="https://wa.me/5511919219193" target="_blank" title="WhatsApp">WA</a>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/5511919219193?text=Olá! Vim pelo site e gostaria de falar com vocês." target="_blank" class="float-wa">💬</a>
+
+<div class="modal" id="modal">
+  <span class="modal-close" onclick="closeModal()">✕</span>
+  <div id="modalContent" style="width:100%; max-width:900px; display:flex; justify-content:center"></div>
+</div>
+
+<script>
+  // CURSOR
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 6 + 'px';
+    cursor.style.top = my - 6 + 'px';
+  });
+  function animateRing() {
+    rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+    ring.style.left = rx - 18 + 'px'; ring.style.top = ry - 18 + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  // NAV SCROLL
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // REVEAL ANIMATIONS
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+  // MODAL (VÍDEO/FOTO)
+  const modal = document.getElementById('modal');
+  const content = document.getElementById('modalContent');
+  function openLightbox(imgSrc) {
+    content.innerHTML = `<img src="${imgSrc}" style="max-width:100%; max-height:80vh; object-fit:contain">`;
+    modal.classList.add('open');
+  }
+  function openVideo(url) {
+    content.innerHTML = `<iframe width="100%" height="500" src="${url}?autoplay=1" frameborder="0" allowfullscreen></iframe>`;
+    modal.classList.add('open');
+  }
+  function closeModal() { modal.classList.remove('open'); content.innerHTML = ''; }
+</script>
+
+</body>
+</html>
